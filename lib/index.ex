@@ -1,6 +1,6 @@
 defmodule OrderJob do
-  @spec init(any) :: Order
   def init(container \\ %DependencyContainer{}) do
     Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(container)
+    |> Services.ProcessingService.processOrder()
   end
 end
