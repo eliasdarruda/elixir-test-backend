@@ -3,10 +3,10 @@ defmodule Mix.Tasks.Process do
 
   @shortdoc "Runs the OrderJob.init/1 function"
   def run(_) do
-    IO.puts("Starting order processing...")
+    IO.puts("Starting task for order processing...")
 
     OrderJob.init() |> IO.inspect()
 
-    IO.puts("Order finished!")
+    IO.puts("Task finished!")
   end
 end

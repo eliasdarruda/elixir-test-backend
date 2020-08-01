@@ -15,9 +15,9 @@ defmodule Models.Address do
     field(:longitude, :float)
     field(:receiver_phone, :string)
 
+    embeds_one(:country, Models.Address.Country)
     embeds_one(:city, Models.Address.City)
     embeds_one(:state, Models.Address.State)
-    embeds_one(:country, Models.Address.Country)
     embeds_one(:neighborhood, Models.Address.Neighborhood)
   end
 
@@ -36,6 +36,25 @@ defmodule Models.Address do
   def changeset(schema, params) do
     schema
     |> cast(params, @required)
+    |> cast_embed(:country)
+    |> cast_embed(:city)
+    |> cast_embed(:state)
+    |> cast_embed(:neighborhood)
+  end
+end
+
+defmodule Models.Address.Country do
+  use Ecto.Schema
+
+  @primary_key false
+  embedded_schema do
+    field(:id, :string)
+    field(:name, :string)
+  end
+
+  def changeset(schema, params) do
+    schema
+    |> cast(params, [:id, :name])
   end
 end
 
@@ -62,21 +81,6 @@ defmodule Models.Address.State do
   def changeset(schema, params) do
     schema
     |> cast(params, [:name])
-  end
-end
-
-defmodule Models.Address.Country do
-  use Ecto.Schema
-
-  @primary_key false
-  embedded_schema do
-    field(:id, :string)
-    field(:name, :string)
-  end
-
-  def changeset(schema, params) do
-    schema
-    |> cast(params, [:id, :name])
   end
 end
 

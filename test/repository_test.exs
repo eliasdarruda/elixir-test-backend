@@ -1,8 +1,8 @@
-defmodule OrderJobTest do
+defmodule RepositoryTest do
   use ExUnit.Case
 
-  test "get mapped nested objects from json" do
-    order = OrderJob.init() |> Models.Order.cast()
+  test "get mapped nested objects from external json" do
+    order = Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(%DependencyContainer{})
     [first_order_item | _] = order.order_items
 
     assert order.id == 9_987_071
