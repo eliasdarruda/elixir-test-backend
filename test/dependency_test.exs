@@ -9,7 +9,7 @@ defimpl Providers.ExternalDataProviderProtocol, for: FakeContainer do
 end
 
 defimpl Repository.ExternalApiRepositoryProtocol, for: FakeContainer do
-  def fetchPurchaseOrders(container) do
+  def fetchPurchaseOrder(container) do
     path_return = Providers.ExternalDataProviderProtocol.get(container, "fakePath")
     %{id: "fakeId", path: path_return}
   end
@@ -19,7 +19,7 @@ defmodule DependencyTest do
   use ExUnit.Case
 
   test "gets mock data from fake external API repository and provider" do
-    json = INDEX.init(%FakeContainer{})
+    json = OrderJob.init(%FakeContainer{})
 
     assert Map.get(json, :id) == "fakeId"
     assert Map.get(json, :path) == "fakePath"

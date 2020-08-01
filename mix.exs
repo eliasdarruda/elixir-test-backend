@@ -1,4 +1,4 @@
-defmodule INDEX.MixProject do
+defmodule OrderJob.MixProject do
   use Mix.Project
 
   def project do
@@ -22,7 +22,8 @@ defmodule INDEX.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+      {:ecto, "~> 3.4.5"}
     ]
   end
 end

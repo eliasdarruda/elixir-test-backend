@@ -1,5 +1,6 @@
-defmodule INDEX do
+defmodule OrderJob do
+  @spec init(any) :: Order
   def init(container \\ %DependencyContainer{}) do
-    Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrders(container)
+    Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(container)
   end
 end
