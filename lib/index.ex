@@ -1,18 +1,5 @@
 defmodule INDEX do
-  @moduledoc """
-  Documentation for `INDEX`.
-  """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> INDEX.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def init(container \\ %DependencyContainer{}) do
+    Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrders(container)
   end
 end

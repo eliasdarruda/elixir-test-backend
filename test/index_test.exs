@@ -1,8 +1,9 @@
 defmodule INDEXTest do
   use ExUnit.Case
-  doctest INDEX
 
-  test "greets the world" do
-    assert INDEX.hello() == :world
+  test "gets raw json from index" do
+    json = INDEX.init()
+
+    assert Map.get(json, "id") == 9_987_071
   end
 end
