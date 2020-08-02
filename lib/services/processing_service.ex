@@ -1,5 +1,4 @@
 defmodule Services.ProcessingService do
-  @spec processOrder(Models.Order) :: Models.ProcessedOrder
   @doc "process and validate order data"
   def processOrder(order) do
     processingOrder =
@@ -14,12 +13,10 @@ defmodule Services.ProcessingService do
     processingOrder
   end
 
-  @spec saveProcessOrder(Models.ProcessedOrder, any) :: any()
   def saveProcessOrder(processedOrder, container) do
     Repository.OrdersApiProtocol.registerNewOrder(container, processedOrder)
   end
 
-  @spec validateParsingErrors(Models.ProcessedOrder) :: Models.ProcessedOrder
   defp validateParsingErrors(processed) do
     changeset = Models.ProcessedOrder.changeset(processed, %{})
 
@@ -30,7 +27,6 @@ defmodule Services.ProcessingService do
     processed
   end
 
-  @spec parseEqualInfo(Models.ProcessedOrder, Models.Order) :: Models.ProcessedOrder
   defp parseEqualInfo(processed, order) do
     Models.ProcessedOrder.cast(processed, %{
       externalCode: to_string(order.id),
@@ -49,7 +45,6 @@ defmodule Services.ProcessingService do
     })
   end
 
-  @spec parseOrderTotal(Models.ProcessedOrder, Models.Order) :: Models.ProcessedOrder
   defp parseOrderTotal(processed, order) do
     Models.ProcessedOrder.cast(processed, %{
       subTotal: order.total_amount,
@@ -59,7 +54,6 @@ defmodule Services.ProcessingService do
     })
   end
 
-  @spec parseCustomer(Models.ProcessedOrder, Models.Order) :: Models.ProcessedOrder
   defp parseCustomer(processed, order) do
     Models.ProcessedOrder.cast(processed, %{
       customer: %{
@@ -71,7 +65,6 @@ defmodule Services.ProcessingService do
     })
   end
 
-  @spec parseItems(Models.ProcessedOrder, Models.Order) :: Models.ProcessedOrder
   defp parseItems(processed, order) do
     items =
       Enum.map(
@@ -93,7 +86,6 @@ defmodule Services.ProcessingService do
     })
   end
 
-  @spec parsePayments(Models.ProcessedOrder, Models.Order) :: Models.ProcessedOrder
   defp parsePayments(processed, order) do
     payments =
       Enum.map(

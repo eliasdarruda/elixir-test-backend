@@ -1,6 +1,37 @@
 defmodule ProcessingServiceTest do
   use ExUnit.Case
 
+  defmodule FakeProcessingContainer do
+    defstruct []
+  end
+
+  defimpl Providers.ExternalDataProviderProtocol, for: FakeProcessingContainer do
+    def get(_d, path) do
+      Providers.ExternalDataProviderProtocol.impl_for!(%DependencyContainer{}).get(
+        %DependencyContainer{},
+        path
+      )
+    end
+  end
+
+  defimpl Repository.ExternalApiRepositoryProtocol, for: FakeProcessingContainer do
+    def fetchPurchaseOrder(_) do
+      Repository.ExternalApiRepositoryProtocol.impl_for!(%DependencyContainer{}).fetchPurchaseOrder(
+        %DependencyContainer{}
+      )
+    end
+  end
+
+  defimpl Repository.OrdersApiProtocol, for: FakeProcessingContainer do
+    def registerNewOrder(_, processedOrder) do
+      if processedOrder.externalCode == nil do
+        raise "force error"
+      end
+
+      :ok
+    end
+  end
+
   test "process order" do
     processedOrder =
       Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(%DependencyContainer{})
@@ -18,6 +49,43 @@ defmodule ProcessingServiceTest do
 
     assert_raise RuntimeError, fn ->
       %{order | id: nil} |> Services.ProcessingService.processOrder()
+    end
+  end
+
+  test "send processed order to api w/ mocked api" do
+    container = %FakeProcessingContainer{}
+
+    returnValue =
+      Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(container)
+      |> Services.ProcessingService.processOrder()
+      |> Services.ProcessingService.saveProcessOrder(container)
+
+    assert returnValue == :ok
+  end
+
+  test "send processed order with invalid fields to api w/ mocked api" do
+    container = %FakeProcessingContainer{}
+
+    processedOrder =
+      Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(container)
+      |> Services.ProcessingService.processOrder()
+
+    assert_raise RuntimeError, fn ->
+      %{processedOrder | externalCode: nil}
+      |> Services.ProcessingService.saveProcessOrder(container)
+    end
+  end
+
+  test "send processed order with invalid fields to api integrated in original api" do
+    container = %DependencyContainer{}
+
+    processedOrder =
+      Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(container)
+      |> Services.ProcessingService.processOrder()
+
+    assert_raise RuntimeError, fn ->
+      %{processedOrder | externalCode: nil}
+      |> Services.ProcessingService.saveProcessOrder(container)
     end
   end
 end
