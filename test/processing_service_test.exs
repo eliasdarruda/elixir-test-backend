@@ -58,7 +58,7 @@ defmodule ProcessingServiceTest do
     returnValue =
       Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(container)
       |> Services.ProcessingService.processOrder()
-      |> Services.ProcessingService.saveProcessOrder(container)
+      |> Services.ProcessingService.saveProcessedOrder(container)
 
     assert returnValue == :ok
   end
@@ -72,20 +72,7 @@ defmodule ProcessingServiceTest do
 
     assert_raise RuntimeError, fn ->
       %{processedOrder | externalCode: nil}
-      |> Services.ProcessingService.saveProcessOrder(container)
-    end
-  end
-
-  test "send processed order with invalid fields to api integrated in original api" do
-    container = %DependencyContainer{}
-
-    processedOrder =
-      Repository.ExternalApiRepositoryProtocol.fetchPurchaseOrder(container)
-      |> Services.ProcessingService.processOrder()
-
-    assert_raise RuntimeError, fn ->
-      %{processedOrder | externalCode: nil}
-      |> Services.ProcessingService.saveProcessOrder(container)
+      |> Services.ProcessingService.saveProcessedOrder(container)
     end
   end
 end

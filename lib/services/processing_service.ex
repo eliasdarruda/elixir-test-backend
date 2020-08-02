@@ -13,7 +13,7 @@ defmodule Services.ProcessingService do
     processingOrder
   end
 
-  def saveProcessOrder(processedOrder, container) do
+  def saveProcessedOrder(processedOrder, container) do
     Repository.OrdersApiProtocol.registerNewOrder(container, processedOrder)
   end
 
