@@ -22,6 +22,7 @@ defmodule OrderJob.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:mongodb, "~> 0.5.1"},
       {:jason, "~> 1.2"},
       {:ecto, "~> 3.4.5"},
       {:castore, "~> 0.1.0"},
