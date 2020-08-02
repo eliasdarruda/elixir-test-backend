@@ -2,20 +2,24 @@ defmodule Services.ProcessingService do
   @spec processOrder(Models.Order) :: Models.ProcessedOrder
   @doc "process and validate order data"
   def processOrder(order) do
-    %Models.ProcessedOrder{}
-    |> parseEqualInfo(order)
-    |> parseOrderTotal(order)
-    |> parseCustomer(order)
-    |> parseItems(order)
-    |> parsePayments(order)
-    |> validateParsingErrors()
+    processingOrder =
+      %Models.ProcessedOrder{}
+      |> parseEqualInfo(order)
+      |> parseOrderTotal(order)
+      |> parseCustomer(order)
+      |> parseItems(order)
+      |> parsePayments(order)
+      |> validateParsingErrors()
+
+    processingOrder
   end
 
-  @spec saveProcessOrder(Models.ProcessedOrder) :: nil
-  def saveProcessOrder(processedOrder) do
-    nil
+  @spec saveProcessOrder(Models.ProcessedOrder, any) :: any()
+  def saveProcessOrder(processedOrder, container) do
+    Repository.OrdersApiProtocol.registerNewOrder(container, processedOrder)
   end
 
+  @spec validateParsingErrors(Models.ProcessedOrder) :: Models.ProcessedOrder
   defp validateParsingErrors(processed) do
     changeset = Models.ProcessedOrder.changeset(processed, %{})
 
@@ -50,7 +54,8 @@ defmodule Services.ProcessingService do
     Models.ProcessedOrder.cast(processed, %{
       subTotal: order.total_amount,
       total: order.total_amount_with_shipping,
-      deliveryFee: order.total_shipping
+      deliveryFee: order.total_shipping,
+      total_shipping: order.total_shipping
     })
   end
 

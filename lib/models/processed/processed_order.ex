@@ -8,6 +8,7 @@ defmodule Models.ProcessedOrder do
     field(:storeId, :integer)
     field(:subTotal, :float)
     field(:deliveryFee, :float)
+    field(:total_shipping, :float)
     field(:total, :float)
     field(:country, :string)
     field(:state, :string)
@@ -31,6 +32,7 @@ defmodule Models.ProcessedOrder do
     :storeId,
     :subTotal,
     :deliveryFee,
+    :total_shipping,
     :total,
     :country,
     :state,
@@ -65,5 +67,15 @@ defmodule Models.ProcessedOrder do
 
   def apply(schema) do
     schema |> apply_changes
+  end
+end
+
+defimpl Jason.Encoder, for: Models.ProcessedOrder do
+  def encode(struct, opts) do
+    Enum.reduce(Map.from_struct(struct), %{}, fn
+      {k, %Ecto.Association.NotLoaded{}}, acc -> acc
+      {k, v}, acc -> Map.put(acc, k, v)
+    end)
+    |> Jason.Encode.map(opts)
   end
 end
